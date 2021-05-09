@@ -7,20 +7,13 @@ import logging
 from datetime import datetime
 
 
-def validate_schema(error_logs_file, data_input_file):
+def validate_schema(data_input_file):
     """
     Checks validity of event schema and stores detected error logs
     :param error_logs_file: (str) Where to write error log messages to
     :param data_input_file: (str) Where the file with event data is stored
     :return:
     """
-    logging.basicConfig(
-        filename=error_logs_file,
-        filemode="a",
-        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.ERROR,
-    )
 
     with open(data_input_file) as file:
         ndjson_reader = ndjson.reader(file)
@@ -60,10 +53,9 @@ def generate_event_report(data_input_file, report_file):
                 else:
                     report[event_value] = {f"{sent_at_value}": 1}
             else:
-                logging.error(f"Necessary attributes missing for event: {row}")
                 report["unknown"] += 1
 
-    with open(report_file, 'w') as file:
+    with open(report_file, "w") as file:
         json.dump(report, file)
 
     return report
@@ -71,16 +63,29 @@ def generate_event_report(data_input_file, report_file):
 
 if __name__ == "__main__":
 
-    data_input_file = "./input_data/input_test.json"
-    error_logs_file = "error_logs.txt"
-    report_file = './event_report.txt'
+    # data_input_file = "./input_data/input_test.json"
+    # error_logs_file = "/logs/error_logs.txt"
+    # report_file = "/logs/event_report.txt"
 
-    # clean up previous runs:
-    with open(error_logs_file, 'w') as file:
+    # locally:
+    data_input_file = "./input_data/input_test.json"
+    error_logs_file = "./error_logs.txt"
+    report_file = "./event_report.txt"
+
+    logging.basicConfig(
+        filename=error_logs_file,
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.ERROR,
+    )
+
+    # clean up from previous runs:
+    with open(error_logs_file, "w") as file:
         file.truncate(0)
         file.close()
 
     # Objective 1:
-    validate_schema(error_logs_file, data_input_file)
+    validate_schema(data_input_file)
     # Objective 2:
     generate_event_report(data_input_file, report_file)
