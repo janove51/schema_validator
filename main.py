@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # report_file = "/logs/event_report.txt"
 
     # locally:
-    data_input_file = "./input_data/input_test.json"
+    data_input_file = "./input_data/input.json"
     error_logs_file = "./error_logs.txt"
     report_file = "./event_report.txt"
 
