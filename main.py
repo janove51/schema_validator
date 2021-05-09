@@ -1,3 +1,5 @@
+import json
+
 import ndjson
 from pydantic_models import models
 from pydantic import ValidationError
@@ -6,7 +8,12 @@ from datetime import datetime
 
 
 def validate_schema(error_logs_file, data_input_file):
-
+    """
+    Checks validity of event schema and stores detected error logs
+    :param error_logs_file: (str) Where to write error log messages to
+    :param data_input_file: (str) Where the file with event data is stored
+    :return:
+    """
     logging.basicConfig(
         filename=error_logs_file,
         filemode="a",
@@ -24,39 +31,56 @@ def validate_schema(error_logs_file, data_input_file):
                 logging.error(f"Event: {row} \n {e} \n")
 
 
-def generate_event_report(data_input_file):
+def generate_event_report(data_input_file, report_file):
     """
-    Generates report counting nr of events per event and sent_at date
-    :param data_input_file: path to input data containing the events
-    :return: Dict, example: {'submission_success': {'2018-01-30': 2}, 'registration_initiated': {'2018-02-03': 1}}
+    Generates a report that counts the number of events per event name and sent_at date
+    :param data_input_file: (str) Path to input data containing the events
+    :return: (Dict) Example: {'submission_success': {'2018-01-30': 2}, 'registration_initiated': {'2018-02-03': 1}}
     """
-    report = {}
+    report = {"unknown": 0}
 
     with open(data_input_file) as file:
         ndjson_reader = ndjson.reader(file)
 
         for row in ndjson_reader:
 
-            if "event" in row.keys() or "sent_at" in row.keys():
+            if "event" in row.keys() and "sent_at" in row.keys():
                 event_value = row["event"]
-                sent_at_value = datetime.strptime(row["sent_at"], "%Y-%m-%d %H:%M:%S.%f").strftime("%Y-%m-%d")
+                sent_at_value = datetime.strptime(
+                    row["sent_at"], "%Y-%m-%d %H:%M:%S.%f"
+                ).strftime("%Y-%m-%d")
 
-                if event_value in report.keys():   # event exists already
-                    if sent_at_value in report[event_value].keys():    # date exists already
+                if event_value in report.keys():  # event exists already
+                    if (
+                        sent_at_value in report[event_value].keys()
+                    ):  # date exists already
                         report[event_value][sent_at_value] += 1
                     else:
                         report[event_value][sent_at_value] = 1
                 else:
                     report[event_value] = {f"{sent_at_value}": 1}
             else:
-                logging.error(f"Necessary keys missing for event: {row}")
+                logging.error(f"Necessary attributes missing for event: {row}")
+                report["unknown"] += 1
+
+    with open(report_file, 'w') as file:
+        json.dump(report, file)
 
     return report
 
+
 if __name__ == "__main__":
 
-    error_logs_file = "error_logs.txt"
     data_input_file = "./input_data/input_test.json"
+    error_logs_file = "error_logs.txt"
+    report_file = './event_report.txt'
 
-    # validate_schema(error_logs_file, data_input_file)
-    print(generate_event_report(data_input_file))
+    # clean up previous runs:
+    with open(error_logs_file, 'w') as file:
+        file.truncate(0)
+        file.close()
+
+    # Objective 1:
+    validate_schema(error_logs_file, data_input_file)
+    # Objective 2:
+    generate_event_report(data_input_file, report_file)
