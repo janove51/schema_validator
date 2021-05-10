@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Exclude text files
+# Exclude output files
 output/*

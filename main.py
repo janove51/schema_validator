@@ -1,4 +1,5 @@
 import json
+import os
 
 import ndjson
 from pydantic_models import models
@@ -62,6 +63,9 @@ def generate_event_report(data_input_file, report_file):
 
 
 if __name__ == "__main__":
+
+    # setup folder structure
+    os.mkdir("./output")
 
     # Docker:
     data_input_file = "./input_data/input.json"
