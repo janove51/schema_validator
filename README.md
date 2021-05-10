@@ -6,4 +6,4 @@ Process running a schema validation against file with events and reporting summa
 
 # Setup
 1. Build the image: `docker build -t taxfix-assignment .`
-2. Run the image: ```docker run -d -v `pwd`/output:/schema_validator/output taxfix-assignment:latest```
+2. From within root folder inside the project, run the container using that image: ```docker run -d -v `pwd`/output:/schema_validator/output taxfix-assignment:latest```
