@@ -63,14 +63,15 @@ def generate_event_report(data_input_file, report_file):
 
 if __name__ == "__main__":
 
-    # data_input_file = "./input_data/input_test.json"
-    # error_logs_file = "/logs/error_logs.txt"
-    # report_file = "/logs/event_report.txt"
-
-    # locally:
+    # Docker:
     data_input_file = "./input_data/input.json"
-    error_logs_file = "./error_logs.txt"
-    report_file = "./event_report.txt"
+    error_logs_file = "/output/error_logs.txt"
+    report_file = "/output/event_report.txt"
+
+    # Local testing:
+    # data_input_file = "./input_data/input.json"
+    # error_logs_file = "./error_logs.txt"
+    # report_file = "./event_report.txt"
 
     logging.basicConfig(
         filename=error_logs_file,

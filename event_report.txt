@@ -1,1 +1,0 @@
-{"unknown": 0, "submission_success": {"2018-01-30": 1}, "registration_initiated": {"2018-02-03": 1}}
