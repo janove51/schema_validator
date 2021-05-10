@@ -64,9 +64,6 @@ def generate_event_report(data_input_file, report_file):
 
 if __name__ == "__main__":
 
-    # setup folder structure
-    os.mkdir("./output")
-
     # Docker:
     data_input_file = "./input_data/input.json"
     error_logs_file = "./output/error_logs.txt"
